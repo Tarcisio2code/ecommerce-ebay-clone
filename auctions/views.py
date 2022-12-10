@@ -106,6 +106,21 @@ def showCategories(request):
 
 def listings(request, id):
     listData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    isWatching = currentUser in listData.whatchlist.all() 
     return render(request, "auctions/listings.html",{
-        "listing": listData
+        "listing": listData,
+        "isWatching": isWatching
     })
+
+def addWatchlist(request, id):
+    listData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    listData.whatchlist.add(currentUser)
+    return HttpResponseRedirect(reverse(listings, args=(id, )))
+ 
+def removeWatchlist(request, id):
+    listData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    listData.whatchlist.remove(currentUser)
+    return HttpResponseRedirect(reverse(listings, args=(id, )))

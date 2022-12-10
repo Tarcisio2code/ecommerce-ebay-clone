@@ -19,6 +19,7 @@ class Listing(models.Model):
     isActive = models.BooleanField(default=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True, related_name="category")
+    whatchlist = models.ManyToManyField(User, blank=True, null=True, related_name="whatchlist")
 
     def __str__(self):
         return self.title
