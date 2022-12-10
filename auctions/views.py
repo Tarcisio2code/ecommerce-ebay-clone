@@ -103,3 +103,9 @@ def showCategories(request):
             "listings": activeListings,
             "categories": listofCategories
         })
+
+def listings(request, id):
+    listData = Listing.objects.get(pk=id)
+    return render(request, "auctions/listings.html",{
+        "listing": listData
+    })

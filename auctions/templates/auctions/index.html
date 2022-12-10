@@ -19,6 +19,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ listing.title }}</h5>
                     <p class="card-text">{{ listing.description }}</p>
+                    <a href="{% url 'listings' id=listing.id %}" class="stretched-link"></a>
                 </div>
                 <div class="card-footer">{{ listing.price }}</div>
             </div>
