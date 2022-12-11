@@ -107,7 +107,7 @@ def showCategories(request):
 def listings(request, id):
     listData = Listing.objects.get(pk=id)
     currentUser = request.user
-    isWatching = currentUser in listData.whatchlist.all() 
+    isWatching = currentUser in listData.watchlist.all() 
     return render(request, "auctions/listings.html",{
         "listing": listData,
         "isWatching": isWatching
@@ -116,11 +116,18 @@ def listings(request, id):
 def addWatchlist(request, id):
     listData = Listing.objects.get(pk=id)
     currentUser = request.user
-    listData.whatchlist.add(currentUser)
+    listData.watchlist.add(currentUser)
     return HttpResponseRedirect(reverse(listings, args=(id, )))
  
 def removeWatchlist(request, id):
     listData = Listing.objects.get(pk=id)
     currentUser = request.user
-    listData.whatchlist.remove(currentUser)
+    listData.watchlist.remove(currentUser)
     return HttpResponseRedirect(reverse(listings, args=(id, )))
+
+def showWatchlist(request):
+    currentUser = request.user
+    userWatchlist = currentUser.watchlist.all()
+    return render(request, "auctions/watchlist.html",{
+        "userWatchlist": userWatchlist
+    })
