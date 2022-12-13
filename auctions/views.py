@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Category, Listing
+from .models import User, Category, Listing, Bid
 
 def index(request):
     activeListings = Listing.objects.filter(isActive=True)
@@ -80,13 +80,16 @@ def createListing(request):
         itemPrice = request.POST["price"]
         itemCategory = request.POST["category"]
 
+        bid = Bid(bid=float(itemPrice), user=currentUser)
+        bid.save()
+        
         catergoryContent = Category.objects.get(categoryName=itemCategory)
 
         newListing = Listing(
             title=itemTitle,
             description=itemDescription,
             imageUrl=itemImageurl,
-            price=float(itemPrice),
+            price=bid,
             owner=currentUser,
             category=catergoryContent
         )
@@ -131,3 +134,20 @@ def showWatchlist(request):
     return render(request, "auctions/watchlist.html",{
         "userWatchlist": userWatchlist
     })
+
+def addBid(request, id):
+    newBid = float(request.POST['newBid'])
+    listing = Listing.objects.get(pk=id)
+    if newBid > listing.price.bid:
+        updateBid = Bid(user=request.user, bid=newBid)
+        updateBid.save()
+        listing.price = updateBid
+        listing.save()
+        message = "Accepted Bid"    
+    else:
+        message = "Bid rejected"
+    
+    return render(request, "auctions/listings.html", {
+        "listing": listing,
+        "message": message
+    }) 
