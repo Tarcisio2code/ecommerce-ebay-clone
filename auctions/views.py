@@ -110,10 +110,16 @@ def showCategories(request):
 def listings(request, id):
     listData = Listing.objects.get(pk=id)
     currentUser = request.user
-    isWatching = currentUser in listData.watchlist.all() 
+    isWatching = currentUser in listData.watchlist.all()
+    if not listData.isActive and currentUser.id == listData.price.user.id:
+        message = "Congratulations, You Won the Auction!"
+    else:
+        message = False
+
     return render(request, "auctions/listings.html",{
         "listing": listData,
-        "isWatching": isWatching
+        "isWatching": isWatching,
+        "message": message
     })
 
 def addWatchlist(request, id):
@@ -150,4 +156,14 @@ def addBid(request, id):
     return render(request, "auctions/listings.html", {
         "listing": listing,
         "message": message
-    }) 
+    })
+
+def closeAuction(request, id):
+    listData = Listing.objects.get(pk=id)
+    listData.isActive = False
+    listData.save()
+    message = "Congratulations Your auction has ended."
+    return render(request, "auctions/listings.html", {
+        "listing": listData,
+        "message": message
+    })

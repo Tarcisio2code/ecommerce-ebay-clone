@@ -2,7 +2,13 @@
 
 {% block body %}
     <div class="row">
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and listing.isActive %}
+            {% if user.username == listing.owner.username %}
+                <form action="{% url 'closeAuction' id=listing.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Close this Auction</button>
+                </form>                
+            {% endif %}
             {% if isWatching %}
                 <form action="{% url 'removeWatchlist' id=listing.id %}" method="post">
                     {% csrf_token %}
@@ -19,19 +25,19 @@
     <h2>Listing: {{ listing.title }}</h2>
     <img src="{{ listing.imageUrl }}" alt="listing.title" height="200">
     <p>{{ listing.description }}</p>
-    <h4>Start Price ${{ listing.price.bid }}</h4>
+    <h4>Price ${{ listing.price.bid }}</h4>
     <p>Owner: {{ listing.owner }}</p>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and listing.isActive %}
         <form action="{% url 'addBid' id=listing.id %}" method="post">
             {% csrf_token %}
             <div class="form-group">
                 <label for="price">Add Bid</label>
                 <input type="number" min="0" name="newBid" placeholder="Add New Bid">
                 <button type="submit" class="tn btn-outline-primary">Add</button>
-                {% if message %}
-                    <span>{{ message }}</span>
-                {% endif %}
             </div>
         </form>
+    {% endif %}
+    {% if message %}
+        <p>{{ message }}</p>
     {% endif %}
 {% endblock %}
