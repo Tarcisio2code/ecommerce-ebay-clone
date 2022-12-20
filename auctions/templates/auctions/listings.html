@@ -25,19 +25,49 @@
     <h2>Listing: {{ listing.title }}</h2>
     <img src="{{ listing.imageUrl }}" alt="listing.title" height="200">
     <p>{{ listing.description }}</p>
-    <h4>Price ${{ listing.price.bid }}</h4>
-    <p>Owner: {{ listing.owner }}</p>
+    <h4>Price ${{ listing.price.bid|floatformat:2 }}</h4>
     {% if user.is_authenticated and listing.isActive %}
         <form action="{% url 'addBid' id=listing.id %}" method="post">
             {% csrf_token %}
             <div class="form-group">
-                <label for="price">Add Bid</label>
-                <input type="number" min="0" name="newBid" placeholder="Add New Bid">
-                <button type="submit" class="tn btn-outline-primary">Add</button>
+                <label for="newBid">{{ listing.price.id }} Bid(s) so far. {% if user.username == listing.owner.username %}You bid is the current bid.{% endif %}</label>
+                <input type="number" min="0" class="form-control" name="newBid" placeholder="Bid">
             </div>
+            <button type="submit" class="btn btn-outline-primary">Place Bid</button>
         </form>
     {% endif %}
     {% if message %}
         <p>{{ message }}</p>
     {% endif %}
+    <br>
+    <h3>Details</h3>
+    <ul>
+        <li>Listed by: <span style="color: darkcyan">{{ listing.owner }}</span></li>
+        <li>Category: {{ listing.category }}</li>
+    </ul>
+    {% if user.is_authenticated and listing.isActive %}
+        <form action="{% url 'addComments' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="newComment">Add Comments</label>
+                <textarea class="form-control" name="newComment" rows="3" placeholder="Write a new comment"></textarea>
+            </div>
+            <button type="submit" class="btn btn-outline-primary">Send Comment</button>
+        </form>
+    {% endif %}
+    <br>
+    <div>
+        <h3>Comments</h3>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for comment in comments %}
+            <div class="list-group-item flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ comment.user }}</h5>
+                    <small>{{ comment.postDate|timesince }} ago</small>
+                </div>
+                <p class="mb-1">{{ comment.comment }}</p>
+                </div>
+        {% endfor %}
+    </div>
 {% endblock %}

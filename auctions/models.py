@@ -28,3 +28,12 @@ class Listing(models.Model):
 
     def __str__(self):
         return self.title
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="commentUser")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, blank=True, null=True, related_name="commentListing")
+    comment = models.CharField(max_length=300)
+    postDate = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user} comment on {self.listing}"

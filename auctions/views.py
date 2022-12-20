@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Category, Listing, Bid
+from .models import User, Category, Listing, Bid, Comment
 
 def index(request):
     activeListings = Listing.objects.filter(isActive=True)
@@ -111,6 +111,7 @@ def listings(request, id):
     listData = Listing.objects.get(pk=id)
     currentUser = request.user
     isWatching = currentUser in listData.watchlist.all()
+    comments = Comment.objects.filter(listing=listData)
     if not listData.isActive and currentUser.id == listData.price.user.id:
         message = "Congratulations, You Won the Auction!"
     else:
@@ -119,7 +120,8 @@ def listings(request, id):
     return render(request, "auctions/listings.html",{
         "listing": listData,
         "isWatching": isWatching,
-        "message": message
+        "message": message,
+        "comments": comments
     })
 
 def addWatchlist(request, id):
@@ -167,3 +169,15 @@ def closeAuction(request, id):
         "listing": listData,
         "message": message
     })
+
+def addComments(request, id):
+    listData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    commentText = request.POST['newComment']
+    newComment = Comment(
+        user = currentUser,
+        listing = listData,
+        comment = commentText
+    )
+    newComment.save()
+    return HttpResponseRedirect(reverse(listings, args=(id, )))

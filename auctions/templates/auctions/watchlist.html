@@ -11,7 +11,7 @@
                     <p class="card-text">{{ listing.description }}</p>
                     <a href="{% url 'listings' id=listing.id %}" class="stretched-link"></a>
                 </div>
-                <div class="card-footer">{{ listing.price }}</div>
+                <div class="card-footer">${{ listing.price.bid|floatformat:2 }}</div>
             </div>
         {% endfor %}
     </div>   
