@@ -8,12 +8,9 @@ from .models import User, Category, Listing, Bid, Comment
 
 def index(request):
     activeListings = Listing.objects.filter(isActive=True)
-    listofCategories = Category.objects.all()
     return render(request, "auctions/index.html",{
-        "listings": activeListings,
-        "categories": listofCategories
+        "listings": activeListings
     })
-
 
 def login_view(request):
     if request.method == "POST":
@@ -96,16 +93,20 @@ def createListing(request):
         newListing.save()
         return HttpResponseRedirect(reverse("index"))
 
-def showCategories(request):
-    if request.method == "POST":
-        selectedCategory = request.POST['category']
-        category = Category.objects.get(categoryName=selectedCategory)
-        activeListings = Listing.objects.filter(isActive=True, category=category)
-        listofCategories = Category.objects.all()
-        return render(request, "auctions/index.html",{
-            "listings": activeListings,
-            "categories": listofCategories
-        })
+def categories(request):
+    listofCategories = Category.objects.all()
+    return render(request, "auctions/categories.html",{
+        "categories": listofCategories
+    })
+
+def filterbyCategories(request, selectedCategory):
+    category = Category.objects.get(categoryName=selectedCategory)
+    activeListings = Listing.objects.filter(isActive=True, category=category)
+    listofCategories = Category.objects.all()
+    return render(request, "auctions/index.html",{
+        "listings": activeListings,
+        "categories": listofCategories
+    })
 
 def listings(request, id):
     listData = Listing.objects.get(pk=id)
