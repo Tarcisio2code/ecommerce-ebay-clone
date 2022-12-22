@@ -5,8 +5,8 @@
     <div class="row mx-3">
         {% for listing in userWatchlist %}
             <div class="card mx-3" style="width: 18rem; margin-bottom: 2rem;">
-                <img class="card-img-top mx-auto d-block" src="{{ listing.imageUrl }}" alt="{{ listing.imageUrl }}" style="width: 6rem; height: 8rem;">
                 <div class="card-body">
+                    <img class="card-img-top mx-auto d-block" src="{{ listing.imageUrl }}" alt="{{ listing.imageUrl }}" style="width: 6rem; height: 8rem; margin-bottom: 1rem;">
                     <h5 class="card-title">{{ listing.title }}</h5>
                     <p class="card-text">{{ listing.description }}</p>
                     <a href="{% url 'listings' id=listing.id %}" class="stretched-link"></a>
