@@ -1,34 +1,41 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}Auctions - Create New Listing{% endblock %}
+
 {% block body %}
     <h2>Create New Listing</h2>
-
-    <form action="{% url 'create' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" name="title" class="form-control" id="title" placeholder="Enter Title">
+    <div class="row justify-content-center">
+        <div class="card w-75">
+            <div class="card-body">
+                <form action="{% url 'create' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" name="title" class="form-control" id="title" placeholder="Enter Title">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" name="description" class="form-control" id="description" placeholder="Enter item description">
+                    </div>
+                    <div class="form-group">
+                        <label for="imageurl">Image URL</label>
+                        <input type="text" name="imageurl" class="form-control" id="imageurl" placeholder="Enter Image URL">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price</label>
+                        <input type="number" min="0" name="price" class="form-control" id="price" placeholder="Enter the price of the item" required>
+                    </div>
+                    <div class="form-group">
+                        <select name="category" class="form-select" aria-label="Category List" size="3" required>
+                            <option disabled>Choose a category</option>
+                            {% for category in categories %}
+                                <option value="{{ category }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-sm active">Create New Listing</button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <input type="text" name="description" class="form-control" id="description" placeholder="Enter item description">
-        </div>
-        <div class="form-group">
-            <label for="imageurl">Image URL</label>
-            <input type="text" name="imageurl" class="form-control" id="imageurl" placeholder="Enter Image URL">
-        </div>
-        <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" min="0" name="price" class="form-control" id="price" placeholder="Enter the price of the item" required>
-        </div>
-        <div class="form-group">
-            <select name="category" class="form-select" aria-label="Category List" size="3" required>
-                <option disabled>Choose a category</option>
-                {% for category in categories %}
-                    <option value="{{ category }}">{{ category }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="btn btn-outline-primary">Create New Listing</button>
-    </form>
+    </div>
 {% endblock %}

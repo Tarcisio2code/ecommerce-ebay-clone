@@ -1,16 +1,17 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}Auctions - Categories{% endblock %}
+
 {% block body %}
+    <h2>Categories</h2>
     <div class="row mx-3">
         {% for category in categories %}
-            <div class="card mx-3" style="width: 300px; margin-bottom: 2rem;">
+            <div class="card m-2" style="width: 350px;">
                 <div class="card-body mx-auto">
                     <h3 class="card-title">{{ category }}</h3>
                     <img class="card-img mx-auto d-block mx-3" src="{{ category.imageUrl }}" alt="{{ category }}">
                 </div>
-                <div>
-                    <a class="card-footer bg-transparent border-0 stretched-link" href="{% url 'filterbyCategories' category %}">Bid now</a>
-                </div>
+                <a class="card-link stretched-link" href="{% url 'filterbyCategories' category %}"></a>
             </div>
         {% endfor %}
     </div>

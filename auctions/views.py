@@ -12,7 +12,7 @@ def index(request):
         "listings": activeListings
     })
 
-def login_view(request):
+def login_view(request, id):
     if request.method == "POST":
 
         # Attempt to sign user in
@@ -23,13 +23,17 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            if id:
+                return HttpResponseRedirect(reverse(listings, args=(id, )))
+            else:
+                return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "auctions/login.html", {
+                "id":0,
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "auctions/login.html")
+        return render(request, "auctions/login.html", {"id":id})
 
 
 def logout_view(request):
@@ -102,10 +106,9 @@ def categories(request):
 def filterbyCategories(request, selectedCategory):
     category = Category.objects.get(categoryName=selectedCategory)
     activeListings = Listing.objects.filter(isActive=True, category=category)
-    listofCategories = Category.objects.all()
     return render(request, "auctions/index.html",{
         "listings": activeListings,
-        "categories": listofCategories
+        "category": category
     })
 
 def listings(request, id):

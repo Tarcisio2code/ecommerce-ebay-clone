@@ -8,14 +8,16 @@
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
     </head>
     <body>
-        <h1>Auctions</h1>
-        <div>
-            {% if user.is_authenticated %}
-                Signed in as <strong>{{ user.username }}</strong>.
-            {% else %}
-                Not signed in.
-            {% endif %}
-        </div>
+        <nav class="navbar navbar-dark bg-dark">
+            <h1 class="nav-left">Collectibles - Auctions</h1>
+            <div class="nav-right text-white">
+                {% if user.is_authenticated %}
+                    <span class="nav-item">Signed in as <strong>{{ user.username }}</strong>.</span>
+                {% else %}
+                    <span class="nav-item">Not signed in.</span>
+                {% endif %}
+            </div>
+        </nav>
         <ul class="nav">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
@@ -28,22 +30,25 @@
                     <a class="nav-link" href="{% url 'create' %}">Create Listing</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'showWatchlist' %}">Watchlist</a>
+                    <a class="nav-link" href="{% url 'showWatchlist' %}">Watchlist
+                        <span class="badge badge-info">{{ user.watchlist.count }}</span>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                 </li>
             {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                    <a class="nav-link" href="{% url 'login' id=0 %}">Log In</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'register' %}">Register</a>
                 </li>
             {% endif %}
         </ul>
-        <hr>
-        {% block body %}
-        {% endblock %}
+        <div class="body-container">
+            {% block body %}
+            {% endblock %}
+        </div>
     </body>
 </html>
