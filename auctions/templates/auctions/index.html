@@ -13,7 +13,7 @@
                     <img class="card-img-top mx-auto d-block" src="{{ listing.imageUrl }}" alt="{{ listing.imageUrl }}" style="width: 6rem; height: 8rem; margin-bottom: 1rem;">
                     <h5 class="card-title">{{ listing.title }}</h5>
                     <p class="card-text">{{ listing.description }}</p>
-                    <strong class="card-text">${{ listing.price.bid|floatformat:2 }}</strong>
+                    <strong class="card-text">${{ listing.price|floatformat:2 }}</strong>
                     <a class="card-link stretched-link" href="{% url 'listings' id=listing.id %}"></a>
                 </div>
             </div>

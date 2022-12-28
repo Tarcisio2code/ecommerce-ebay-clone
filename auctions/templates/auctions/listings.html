@@ -70,25 +70,29 @@
                     <br>
                 {% endif %}
                 <div class="row">
-                    <div class="card" style="width: 250px; height: 230px;">
+                    <div class="card" style="width: 250px; height: 260px;">
                         <div class="card-body">
-                            <h4 class="card-title">${{ listing.price.bid|floatformat:2 }}</h4>
+                            <h4 class="card-title">${{ listing.price|floatformat:2 }}</h4>
                             {% if user.is_authenticated and listing.isActive %}
                                 <form action="{% url 'addBid' id=listing.id %}" method="post">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <label for="newBid">{{ listing.price.id }} Bid(s) so far. {% if user.username == listing.owner.username %}You bid is the current bid.{% endif %}</label>
+                                        <label for="newBid">{{ bids.count }} Bid(s) so far. {% if bids.count > 0 and user.username == listing.owner.username %}You bid is the current bid.{% endif %}</label>
                                         <input type="number" min="0" class="form-control" name="newBid" placeholder="Bid">
                                     </div>
                                     <button type="submit" class="btn btn-warning btn-sm btn-block active">Place Bid</button>
                                 </form>
-                                {% if message %}
-                                    <p>{{ message }}</p>
-                                {% endif %}
                             {% else %}
                                 <p class="card-text">Log in to bid</p>
                                 <a class="btn btn-warning btn-sm btn-block active" href="{% url 'login' id=listing.id %}">Log In</a>
                             {% endif %}
+                            {% if message %}
+                                {% if message|slice:"5" == "Error" %}
+                                    <div class="card-text text-center text-danger">{{ message }}</div>
+                                {% else %}
+                                    <div class="card-text text-center text-success">{{ message }}</div>
+                            {% endif %}
+                        {% endif %}
                         </div>
                     </div>
                 </div>

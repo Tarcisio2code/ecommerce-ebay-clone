@@ -12,7 +12,7 @@
                     <h5 class="card-title">{{ listing.title }}</h5>
                     <p class="card-text">{{ listing.description }}</p>
                     <a class="card-link stretched-link" href="{% url 'listings' id=listing.id %}"></a>
-                    <strong class="card-text">${{ listing.price.bid|floatformat:2 }}</strong>
+                    <strong class="card-text">${{ listing.price|floatformat:2 }}</strong>
                 </div>
             </div>
         {% endfor %}

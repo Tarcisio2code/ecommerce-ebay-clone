@@ -30,7 +30,7 @@ def login_view(request, id):
         else:
             return render(request, "auctions/login.html", {
                 "id":0,
-                "message": "Invalid username and/or password."
+                "message": "Error: Invalid username and/or password."
             })
     else:
         return render(request, "auctions/login.html", {"id":id})
@@ -51,7 +51,7 @@ def register(request):
         confirmation = request.POST["confirmation"]
         if password != confirmation:
             return render(request, "auctions/register.html", {
-                "message": "Passwords must match."
+                "message": "Error: Passwords must match."
             })
 
         # Attempt to create new user
@@ -60,7 +60,7 @@ def register(request):
             user.save()
         except IntegrityError:
             return render(request, "auctions/register.html", {
-                "message": "Username already taken."
+                "message": "Error: Username already taken."
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
@@ -81,16 +81,13 @@ def createListing(request):
         itemPrice = request.POST["price"]
         itemCategory = request.POST["category"]
 
-        bid = Bid(bid=float(itemPrice), user=currentUser)
-        bid.save()
-        
         catergoryContent = Category.objects.get(categoryName=itemCategory)
 
         newListing = Listing(
             title=itemTitle,
             description=itemDescription,
             imageUrl=itemImageurl,
-            price=bid,
+            price=float(itemPrice),
             owner=currentUser,
             category=catergoryContent
         )
@@ -116,7 +113,9 @@ def listings(request, id):
     currentUser = request.user
     isWatching = currentUser in listData.watchlist.all()
     comments = Comment.objects.filter(listing=listData)
-    if not listData.isActive and currentUser.id == listData.price.user.id:
+    bids = Bid.objects.filter(listing=listData)
+    lastBid = bids.last()
+    if not listData.isActive and currentUser.id == lastBid.user.id:
         message = "Congratulations, You Won the Auction!"
     else:
         message = False
@@ -125,7 +124,8 @@ def listings(request, id):
         "listing": listData,
         "isWatching": isWatching,
         "message": message,
-        "comments": comments
+        "comments": comments,
+        "bids": bids
     })
 
 def addWatchlist(request, id):
@@ -149,26 +149,37 @@ def showWatchlist(request):
 
 def addBid(request, id):
     newBid = float(request.POST['newBid'])
-    listing = Listing.objects.get(pk=id)
-    if newBid > listing.price.bid:
-        updateBid = Bid(user=request.user, bid=newBid)
+    listData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    isWatching = currentUser in listData.watchlist.all()
+    comments = Comment.objects.filter(listing=listData)
+    bids = Bid.objects.filter(listing=listData)
+    if newBid > listData.price:
+        updateBid = Bid(
+            user = currentUser,
+            bid = newBid, 
+            listing = listData
+        )
         updateBid.save()
-        listing.price = updateBid
-        listing.save()
-        message = "Accepted Bid"    
+        listData.price = newBid
+        listData.save()
+        message = "Your bid has been registered successfully."    
     else:
-        message = "Bid rejected"
+        message = "Error: Your bid must be higher than the current one."
     
     return render(request, "auctions/listings.html", {
-        "listing": listing,
-        "message": message
+        "listing": listData,
+        "isWatching": isWatching,
+        "message": message,
+        "comments": comments,
+        "bids": bids
     })
 
 def closeAuction(request, id):
     listData = Listing.objects.get(pk=id)
     listData.isActive = False
     listData.save()
-    message = "Congratulations Your auction has ended."
+    message = "Congratulations your auction ended successfully."
     return render(request, "auctions/listings.html", {
         "listing": listData,
         "message": message
